@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+
 
 class PostController extends Controller
 {
@@ -20,11 +20,8 @@ class PostController extends Controller
     public function index()
     {
         //
-        
         $posts = \App\Models\Post::get();
         return view('posts.index', compact('posts'));
-    
-        
     }
 
     /**
@@ -46,12 +43,37 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+
+        $request->validate([
+            'title' => 'required|max:100',
+            'description' => 'required'
+        ]);
+
+        if($request->hasFile('img')){
+
+            $filenameWithExt = $request->file('img')->getClientOriginalName();
+
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            
+            $extension = $request->file('img')->getClientOriginalExtension();
+
+            $filenameToStore = $filename.'_'.time().'.'.$extension;
+
+            $path = $request->file('img')->storeAs('public/img', $filenameToStore);
+        } else{
+            $filenameToStore = '';
+        }
+
         //
-      // dd($request);
         $post = new Post();
         $post->title = $request->title;
         $post->description = $request->description;
+        $post->img = $filenameToStore;
         $post->save();
+
+        if ($post->save()){
+            return redirect('/posts')->with('status','Sucessfully save');
+        }
 
         return redirect('/posts');
 
@@ -63,12 +85,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Post $post)
     {
         //
-        $post = \App\Models\Post::find($id);
         return view('posts.show', compact('post'));
-        // dd($post);
     }
 
     /**
@@ -77,10 +97,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
         //
-        $post = \App\Models\Post::find($id);
         return view('posts.edit', compact('post'));
     }
 
@@ -93,16 +112,33 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //if (! Gate::allows('update-post', $post)) {
-        //    abort(403);
-        //}
+        $request->validate([
+            'title' => 'required|max:100',
+            'description' => 'required'
+        ]);
+
+        if($request->hasFile('img')){
+
+            $filenameWithExt = $request->file('img')->getClientOriginalName();
+
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            
+            $extension = $request->file('img')->getClientOriginalExtension();
+
+            $filenameToStore = $filename.'_'.time().'.'.$extension;
+
+            $path = $request->file('img')->storeAs('public/img', $filenameToStore);
+        } else{
+               
+            $filenameToStore = '';
+        }
 
         $post = \App\Models\Post::find($id);
-            $post->title = $request->title;
-            $post->description = $request->description;
-            $post->save();
+        $post->title = $request->title;
+        $post->description = $request->description;
+        $post->save();
 
-            return redirect('/posts');
+        return redirect('/posts');
 
     }
 

@@ -27,6 +27,19 @@
                                 
                                 </div>
                             </div>
+                            <div class="form-group row">
+                            <label for="img" class="col-md-4 col-form-label text-md-right"><?php echo e(__('Upload Image')); ?></label>
+
+                            <div class="col-md-6">
+                                <input type="file" class="form-control-file <?php $__errorArgs = ['img'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" name="img" value="<?php echo e(old('img')); ?>"  autocomplete="img">
+                            </div>
                             
                                
                             <div class="form-group row mb-0">
