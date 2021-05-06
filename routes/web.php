@@ -15,20 +15,32 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
+//Route::get('/', function(){
+ //   return redirect('/posts');
+//});
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+
+Auth::routes();
+//Route::get('/posts', [App\Http\Controllers\PostController::class, 'index']);
+Route::get('/home', function(){
+   return redirect('/posts');
 });
 
+//
 
+
+
+Route::get('/delete-blank-post', [App\Http\Controllers\PostController::class, 'deleteBlank']);
+Route::get('/posts-archive', [App\Http\Controllers\PostController::class, 'archive']);
+Route::get('/posts/(id)/restore', [App\Http\Controllers\PostController::class, 'restore']);
 Route::resource('/posts', PostController::class)
-        ->missing(function (Request $request) {
-            return Redirect::route('posts.index');
-        });
-Route::get('/posts', [App\Http\Controllers\PostController::class, 'index']);
-Auth::routes();
+       ->missing(function (Request $request) {
+           return Redirect::route('posts.index');
+      });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
-
+Route::resource('/comments', CommentController::class);
 

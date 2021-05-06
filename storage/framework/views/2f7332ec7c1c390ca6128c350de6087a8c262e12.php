@@ -19,6 +19,24 @@
                     <?php else: ?>
                         No image available
                     <?php endif; ?>
+                    <p>Comments Section:</p>
+                    <?php if($comments): ?>
+                    
+                        <?php $__currentLoopData = $comments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $comment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <p><?php echo e($comment->description); ?></p>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php endif; ?>
+                    <h4> Add Comment </h4>
+                    <form method="POST" action="<?php echo e(route('comments.store')); ?>">
+                        <?php echo csrf_field(); ?>
+                        <div class="form-group">
+                            <textarea class="form-control" name="description" id="" cols="30" rows="2"></textarea>
+                            <input type="hidden" name="post_id" value="<?php echo e($post->id); ?>">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-success" value="Add Comment">
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
